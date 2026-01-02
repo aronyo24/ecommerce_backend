@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local environment files
+.env
+.venv
+env/
+venv/
+ENV/
+myenv/
+# Database
+db.sqlite3
+
+# Static and Media files
+/static/
+/media/
+static_cdn/
+media_cdn/
+
+# Logs and temporary files
+*.log
+.DS_Store
