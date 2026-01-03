@@ -32,3 +32,6 @@ class StripeProvider(PaymentProvider):
             return intent
         except stripe.error.StripeError as e:
             raise Exception(f"Stripe error: {str(e)}")
+
+    def query_payment(self, payment_intent_id):
+        return self.confirm_payment(payment_intent_id)

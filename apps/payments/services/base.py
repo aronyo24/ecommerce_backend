@@ -8,3 +8,6 @@ class PaymentProvider(ABC):
     @abstractmethod
     def confirm_payment(self, payment_intent_id):
         pass
+
+    def query_payment(self, payment_intent_id):
+        pass

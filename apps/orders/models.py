@@ -47,6 +47,11 @@ class Order(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['created_at']),
+            models.Index(fields=['status']),
+            models.Index(fields=['user']),
+        ]
 
     def __str__(self):
         return f"Order {self.id} by {self.user.username}"
@@ -61,6 +66,11 @@ class OrderItem(models.Model):
     
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=12, decimal_places=2) # Price at time of purchase
+    subtotal = models.DecimalField(max_digits=12, decimal_places=2, editable=False, default=0)
+
+    def save(self, *args, **kwargs):
+        self.subtotal = self.price * self.quantity
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.quantity} x {self.product_name} in {self.order.id}"

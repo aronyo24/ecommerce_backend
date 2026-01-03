@@ -73,10 +73,12 @@ INSTALLED_APPS = [
     'rest_framework_api_key',
     'corsheaders',
     'django_filters',
+    'apps.core',
     'apps.authentication',
     'apps.products',
     'apps.orders',
     'apps.payments',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -136,6 +138,17 @@ BKASH_USERNAME = os.getenv('BKASH_USERNAME', '')
 BKASH_PASSWORD = os.getenv('BKASH_PASSWORD', '')
 BKASH_BASE_URL = os.getenv('BKASH_BASE_URL', 'https://tokenized.sandbox.bka.sh/v1.2.0-beta')
 
+# Caching (Redis)
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv('REDIS_URL', "redis://127.0.0.1:6379/1"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -188,7 +201,15 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'COERCE_DECIMAL_TO_STRING': False,
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'E-commerce API',
+    'DESCRIPTION': 'API for E-commerce Ordering & Payment System',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 # Simple JWT Configuration

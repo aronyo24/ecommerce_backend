@@ -3,28 +3,40 @@ version: "3.9"
 services:
   backend:
     build:
-      context: .
+      context: ..
       dockerfile: docker/Dockerfile
     container_name: ecommerce_backend
-    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    environment:
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_NAME=ecommerce
+      - DB_USER=ecommerce_user
+      - DB_PASSWORD=secret123
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_URL=redis://redis:6379/1
     volumes:
-      - .:/app
+      - ..:/app
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:15
     container_name: ecommerce_db
     environment:
-      POSTGRES_DB=ecommerce
-      POSTGRES_USER=ecommerce_user
-      POSTGRES_PASSWORD=secret123
+      - POSTGRES_DB=ecommerce
+      - POSTGRES_USER=ecommerce_user
+      - POSTGRES_PASSWORD=secret123
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce_redis
+    ports:
+      - "6379:6379"
 
 volumes:
   postgres_data:

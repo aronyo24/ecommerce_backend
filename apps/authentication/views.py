@@ -12,7 +12,8 @@ from .serializers import (
     VerifyOTPSerializer, 
     ForgotPasswordSerializer, 
     PasswordResetSerializer,
-    UserSerializer
+    UserSerializer,
+    LoginSerializer
 )
 
 class RegisterViewSet(viewsets.GenericViewSet):
@@ -54,10 +55,14 @@ class VerifyOTPViewSet(viewsets.GenericViewSet):
 
 class LoginViewSet(viewsets.GenericViewSet):
     permission_classes = [AllowAny]
+    serializer_class = LoginSerializer
 
     def create(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
         try:
             user_obj = User.objects.get(email=email)
             user = authenticate(username=user_obj.username, password=password)

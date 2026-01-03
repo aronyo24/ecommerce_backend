@@ -11,3 +11,6 @@ sqlparse==0.5.5
 stripe
 djangorestframework-api-key
 requests
+django-redis
+drf-spectacular
+psycopg2-binary

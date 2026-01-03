@@ -1,14 +1,25 @@
 from rest_framework import viewsets, filters, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer, ProductDetailSerializer
+from .services import get_category_tree
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     lookup_field = 'slug'
+
+    @action(detail=False, methods=['get'])
+    def tree(self, request):
+        """
+        Returns the category tree structure.
+        """
+        tree = get_category_tree()
+        return Response(tree)
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()

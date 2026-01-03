@@ -119,3 +119,26 @@ class BkashProvider(PaymentProvider):
         except requests.exceptions.RequestException as e:
             raise Exception(f"bKash Execute Request Error: {str(e)}")
 
+    def query_payment(self, payment_intent_id):
+        token = self._get_token()
+        url = f"{self.base_url}/tokenized/checkout/payment/status"
+        
+        headers = {
+            'Authorization': token,
+            'X-APP-Key': self.app_key,
+            'Content-Type': 'application/json'
+        }
+        
+        payload = {
+            "paymentID": payment_intent_id
+        }
+
+        try:
+            response = requests.post(url, json=payload, headers=headers)
+            response.raise_for_status()
+            data = response.json()
+            
+            return data
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"bKash Query Request Error: {str(e)}")
+

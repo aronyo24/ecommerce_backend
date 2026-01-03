@@ -8,6 +8,7 @@ from .models import Payment
 from .services.stripe import StripeProvider
 from .services.bkash import BkashProvider
 from .serializers import CreatePaymentIntentSerializer
+from apps.products.services import reduce_order_stock
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -102,6 +103,9 @@ class StripeWebhookView(APIView):
                 order.transaction_id = payment_intent['id']
                 order.save()
                 
+                # Reduce Stock
+                reduce_order_stock(order)
+                
                 # Update Payment record
                 payment = Payment.objects.filter(transaction_id=payment_intent['id']).first()
                 if payment:
@@ -155,6 +159,9 @@ class ConfirmPaymentView(APIView):
                         order = payment.order
                         order.payment_status = 'success'
                         order.status = 'processing'
+                        # Reduce Stock
+                        reduce_order_stock(order)
+                        
                         order.transaction_id = result['transaction_id']
                         order.save()
                         
@@ -187,6 +194,9 @@ class ConfirmPaymentView(APIView):
                             order.status = 'processing'
                             order.transaction_id = intent.id
                             order.save()
+                            
+                            # Reduce Stock
+                            reduce_order_stock(order)
                             
                             # Update Payment record
                             if payment:
