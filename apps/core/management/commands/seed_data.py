@@ -15,6 +15,11 @@ class Command(BaseCommand):
         if not User.objects.filter(username='admin').exists():
             User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
             self.stdout.write(self.style.SUCCESS('Admin user created (admin/admin123)'))
+        else:
+            user = User.objects.get(username='admin')
+            user.set_password('admin123')
+            user.save()
+            self.stdout.write(self.style.SUCCESS('Admin user password reset to admin123'))
 
         # Create Categories
         electronics, _ = Category.objects.get_or_create(name='Electronics', description='Gadgets and devices')
